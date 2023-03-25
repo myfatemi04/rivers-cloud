@@ -9,18 +9,13 @@ import flask
 import openai
 import pinecone
 
-# "unused" but loads env vars on import
-import env
-
-MODEL = 'gpt-3.5-turbo'
+MODEL = os.environ.get("MODEL", 'gpt-3.5-turbo')
 
 co = cohere.Client(os.environ['COHERE_API_KEY'])
 pinecone.init(api_key=os.environ['PINECONE_API_KEY'], environment="us-west1-gcp")
 openai.api_key = os.environ['OPENAI_API_KEY']
 
 index = pinecone.Index("rivers")
-
-
 
 def embed(string):
     return co.embed([string]).embeddings[0]
