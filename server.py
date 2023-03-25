@@ -7,9 +7,6 @@ import flask
 import openai
 import pinecone
 
-# "unused" but loads env vars on import
-import env
-
 MODEL = 'gpt-3.5-turbo'
 
 co = cohere.Client(os.environ['COHERE_API_KEY'])
