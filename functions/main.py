@@ -5,6 +5,7 @@ import os
 import time
 import requests
 import json
+from operator import itemgetter
 
 import cohere
 import flask
@@ -52,14 +53,15 @@ def cors(function):
 
 def analyze_emotion(string):
     headers = {"Authorization": f"Bearer {hf}"}
-    API_URL = "https://api-inference.huggingface.co/models/" + emotion_inference_model
+    url = "https://api-inference.huggingface.co/models/" + emotion_inference_model
 
     def query(payload):
         data = json.dumps(payload)
-        response = requests.request("POST", API_URL, headers=headers, data=data)
+        response = requests.request("POST", url, headers=headers, data=data)
         return json.loads(response.content.decode("utf-8"))
 
-    return query({"inputs": string})
+    data = query({"inputs": string})[0]
+    return sorted(data, key=itemgetter('score'))[-1]['label']
 
 @functions_framework.http
 @cors
@@ -74,7 +76,7 @@ def add_story(request):
         (vec_id, embedding, {
             "story": story,
             "timestamp": time.time(),
-            # "sentiment": analyze_emotion(story)
+            "emotion": analyze_emotion(story)
         })
     ])
 
