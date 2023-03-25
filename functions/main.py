@@ -48,7 +48,7 @@ def add_story(request):
         (vec_id, embedding, {
             "story": story,
             "timestamp": time.time(),
-            "sentiment": analyze_emotion(story)
+            # "sentiment": analyze_emotion(story)
         })
     ])
 
