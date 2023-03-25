@@ -3,3 +3,5 @@ functions/.cloudenv
 __pycache__
 .env
 env.yaml
+api_test.py
+/models/

@@ -3,6 +3,8 @@ import functions_framework
 import hashlib
 import os
 import time
+import requests
+import json
 
 import cohere
 import flask
@@ -17,8 +19,22 @@ openai.api_key = os.environ['OPENAI_API_KEY']
 
 index = pinecone.Index("rivers")
 
+emotion_inference_model = os.environ.get("SENTIMENT_MODEL", "j-hartmann/emotion-english-distilroberta-base")
+hf = os.environ["HUGGINGFACE_API_KEY"]
+
 def embed(string):
     return co.embed([string]).embeddings[0]
+
+def analyze_emotion(string):
+    headers = {"Authorization": f"Bearer {hf}"}
+    API_URL = "https://api-inference.huggingface.co/models/" + emotion_inference_model
+
+    def query(payload):
+        data = json.dumps(payload)
+        response = requests.request("POST", API_URL, headers=headers, data=data)
+        return json.loads(response.content.decode("utf-8"))
+
+    return query({"inputs": string})
 
 @functions_framework.http
 def add_story(request):
@@ -31,7 +47,8 @@ def add_story(request):
     index.upsert([
         (vec_id, embedding, {
             "story": story,
-            "timestamp": time.time()
+            "timestamp": time.time(),
+            "sentiment": analyze_emotion(story)
         })
     ])
 
