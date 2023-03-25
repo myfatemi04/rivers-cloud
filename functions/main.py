@@ -21,11 +21,11 @@ def embed(string):
     return co.embed([string]).embeddings[0]
 
 @functions_framework.http
-def add_story():
-    if 'story' not in flask.request.json:
+def add_story(request):
+    if 'story' not in request.json:
         return flask.jsonify({'status': 'error', 'error': 'No story provided'}), 400
 
-    story = flask.request.json['story']
+    story = request.json['story']
     embedding = embed(story)
     vec_id = hashlib.sha256(story.encode()).hexdigest()
     index.upsert([
@@ -39,11 +39,11 @@ def add_story():
 
 
 @functions_framework.http
-def get_stories():
-    if 'query' not in flask.request.args:
+def get_stories(request):
+    if 'query' not in request.args:
         return flask.jsonify({'status': 'error', 'error': 'No query provided'}), 400
 
-    query = flask.request.args['query']
+    query = request.args['query']
     embedding = embed(query)
     result = index.query(vector=embedding, top_k=3, include_metadata=True)
     return [
@@ -52,16 +52,16 @@ def get_stories():
     ]
 
 @functions_framework.http
-def chat():
-    if 'messages' not in flask.request.json:
+def chat(request):
+    if 'messages' not in request.json:
         return flask.jsonify({'status': 'error',
                               'error': '`messages` is `null`. Please provide a list of messages in OpenAI API format.'}), 400
-    if 'retrieved_stories' not in flask.request.json:
+    if 'retrieved_stories' not in request.json:
         return flask.jsonify({'status': 'error',
                               'error': '`retrieved_stories` is `null`. Please provide a list of stories, even if empty.'}), 400
 
-    messages = flask.request.json['messages']
-    retrieved_stories = flask.request.json['retrieved_stories']
+    messages = request.json['messages']
+    retrieved_stories = request.json['retrieved_stories']
 
     messages_with_prompt = [
         {"role": "system",
