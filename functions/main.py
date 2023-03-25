@@ -28,6 +28,14 @@ def embed(string):
 # CORS decorator
 def cors(function):
     def wrapper(request):
+        if request.method == 'OPTIONS':
+            # preflight request
+            headers = {}
+            headers['Access-Control-Allow-Origin'] = '*'
+            headers['Access-Control-Allow-Headers'] = 'Content-Type'
+            headers['Access-Control-Max-Age'] = '3600'
+            return ('', 204, headers)
+
         response = function(request)
         if type(response) is tuple:
             if len(response) == 2:
