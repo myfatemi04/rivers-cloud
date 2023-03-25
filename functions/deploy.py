@@ -5,7 +5,7 @@ gcloud functions deploy {cloud_function_name}
 --gen2 --runtime=python311 --region=us-east4
 --source=. --entry-point={python_function_name}
 --trigger-http --allow-unauthenticated
---env-vars-file .cloudenv
+--env-vars-file env.yaml
 """.replace("\n", " ").strip()
 
 def deploy(cloud_function_name, python_function_name):
