@@ -25,6 +25,23 @@ hf = os.environ["HUGGINGFACE_API_KEY"]
 def embed(string):
     return co.embed([string]).embeddings[0]
 
+# CORS decorator
+def cors(function):
+    def wrapper(request):
+        response = function(request)
+        if type(response) is tuple:
+            if len(response) == 2:
+                response, status = response
+                headers = {}
+            else:
+                response, status, headers = response
+        else:
+            status = 200
+            headers = {}
+        headers['Access-Control-Allow-Origin'] = '*'
+        return (response, status, headers)
+    return wrapper
+
 def analyze_emotion(string):
     headers = {"Authorization": f"Bearer {hf}"}
     API_URL = "https://api-inference.huggingface.co/models/" + emotion_inference_model
@@ -37,6 +54,7 @@ def analyze_emotion(string):
     return query({"inputs": string})
 
 @functions_framework.http
+@cors
 def add_story(request):
     if 'story' not in request.json:
         return flask.jsonify({'status': 'error', 'error': 'No story provided'}), 400
@@ -56,6 +74,7 @@ def add_story(request):
 
 
 @functions_framework.http
+@cors
 def get_stories(request):
     if 'query' not in request.args:
         return flask.jsonify({'status': 'error', 'error': 'No query provided'}), 400
@@ -69,6 +88,7 @@ def get_stories(request):
     ]
 
 @functions_framework.http
+@cors
 def chat(request):
     if 'messages' not in request.json:
         return flask.jsonify({'status': 'error',
