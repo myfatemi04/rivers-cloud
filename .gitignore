@@ -2,3 +2,4 @@ venv
 functions/.cloudenv
 __pycache__
 .env
+env.yaml
