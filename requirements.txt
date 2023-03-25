@@ -1,0 +1,5 @@
+cohere
+flask
+pinecone-client
+openai
+functions-framework

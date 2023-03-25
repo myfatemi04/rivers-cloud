@@ -1,0 +1,4 @@
+venv
+functions/.cloudenv
+__pycache__
+.env

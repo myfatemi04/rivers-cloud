@@ -1,0 +1,1 @@
+gcloud functions deploy python-http-function --gen2 --runtime=python311 --region=us-east4 --source=. --entry-point=demo_function --trigger-http --allow-unauthenticated
