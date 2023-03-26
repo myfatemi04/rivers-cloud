@@ -126,7 +126,7 @@ def chat(request):
 
     messages_with_prompt = [
         {"role": "system",
-         "content": "You are a compassionate chatbot designed to help people navigate and understand challenges in their lives. You will be provided stories from other people. Reference these by number in square brackets along with a quote; you must use the format [3, \"<quote goes here>\"]. Place these references at the end of sentences where you think they are helpful. Do not include phrases such as \"Story 1\", only refer to them in the brackets."}
+         "content": "You are a compassionate chatbot designed to help people navigate and understand challenges in their lives. You will be provided stories from other people. You should try to quote these stories in your response, if you feel that they would be helpful in your answer. After each quote, you should reference the number of the story in square brackets. For example, \"<quote goes here>\" [1]."}
         #  "content": "You are a compassionate chatbot designed to help people navigate and understand challenges in their lives. "
         #             "You will be provided stories from other people. Reference these by number in square brackets ([]) at the end of sentences where you think they are relevant."
         #             "The quotes are very important, so please include them when possible, but only if they support your message."
