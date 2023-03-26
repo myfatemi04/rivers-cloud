@@ -95,6 +95,18 @@ def get_stories(request):
         for story in result['matches']
     ]
 
+def get_quote(story, most_recent_ai_message):
+    result = openai.ChatCompletion.create(
+        model=MODEL,
+        messages=[
+            {"role": "system", "content": "You are a chatbot designed to extract relevant quotes from stories."},
+            {"role": "system", "content": f"Story:\n\n{story}"},
+            {"role": "system", "content": f"Message:\n\n{most_recent_ai_message}"},
+            {"role": "user", "content": f"Provide a quote (1-3 sentences) from the story that supports the above message."},
+        ]
+    )
+    return result.choices[0].message.content
+
 @functions_framework.http
 @cors
 def chat(request):
@@ -110,10 +122,11 @@ def chat(request):
 
     messages_with_prompt = [
         {"role": "system",
-         "content": "You are a compassionate chatbot designed to help people navigate and understand challenges in their lives. You will be provided stories from other people to reference in your responses to the user's messages."}
+         "content": "You are a compassionate chatbot designed to help people navigate and understand challenges in their lives. You will be provided stories from other people. Reference these by number in square brackets ([]) at the end of sentences where you think they are relevant."}
     ]
     for i, story in enumerate(retrieved_stories):
         messages_with_prompt.append({"role": "system", "content": f"Story {i + 1}:\n\n{story['story']}"})
+        messages_with_prompt.append({"role": "system", "content": f"A new user has arrived."})
     messages_with_prompt.extend(messages)
 
     completion = openai.ChatCompletion.create(
@@ -122,7 +135,13 @@ def chat(request):
     )
     message = completion.choices[0].message
 
-    return flask.jsonify(message)
+    quotes = [None] * 3
+
+    for i in [1, 2, 3]:
+        if f"[{i}]" in message:
+            quotes[i - 1] = get_quote(retrieved_stories[i - 1]['story'], message)
+
+    return {"message": dict(message), "quotes": quotes}
 
 
 if __name__ == '__main__':
