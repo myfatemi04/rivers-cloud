@@ -142,7 +142,7 @@ def chat(request):
     quotes = [None] * 3
 
     for i in [1, 2, 3]:
-        if f"[{i}]" in message:
+        if f"[{i}]" in message['content']:
             quotes[i - 1] = get_quote(retrieved_stories[i - 1]['story'], message['content'])
 
     return {"message": dict(message), "quotes": quotes}
