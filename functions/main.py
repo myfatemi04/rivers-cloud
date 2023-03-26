@@ -106,7 +106,7 @@ def get_quote(story, most_recent_ai_message):
         messages=[
             {"role": "system", "content": "You are a chatbot designed to extract relevant quotes from stories."},
             {"role": "system", "content": f"Story:\n\n{story}"},
-            {"role": "user", "content": f"{most_recent_ai_message}\n\n---\n\nProvide a quote (1-3 sentences) from the story that supports the above message. Only write the quote, do not explain."},
+            {"role": "user", "content": f"{most_recent_ai_message}\n\n---\n\nProvide a helpful quote (1-3 sentences) from the story that supports the above message. Only write the quote, do not explain."},
         ]
     )
     return result.choices[0].message['content']
@@ -126,7 +126,7 @@ def chat(request):
 
     messages_with_prompt = [
         {"role": "system",
-         "content": "You are a compassionate chatbot designed to help people navigate and understand challenges in their lives. You will be provided stories from other people. Reference these by number in square brackets ([]) at the end of sentences where you think they are relevant."}
+         "content": "You are a compassionate chatbot designed to help people navigate and understand challenges in their lives. You will be provided stories from other people. Reference these by number in square brackets (i.e., [3]) at the end of sentences where you think they are helpful."}
     ]
     for i, story in enumerate(retrieved_stories):
         messages_with_prompt.append({"role": "system", "content": f"Story {i + 1}:\n\n{story['story']}"})
