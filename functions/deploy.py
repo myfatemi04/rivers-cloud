@@ -15,6 +15,6 @@ def deploy(cloud_function_name, python_function_name):
 if __name__ == "__main__":
     os.system("gcloud config set project rivers-381716")
 
+    deploy("chat", "chat")
     deploy("add_story", "add_story")
     deploy("get_stories", "get_stories")
-    deploy("chat", "chat")

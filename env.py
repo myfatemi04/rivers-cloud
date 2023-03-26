@@ -1,6 +1,6 @@
 import os
 
-with open("functions/.env") as f:
+with open(".env") as f:
     for line in f:
         var = line.strip().split("=")
         if len(var) == 2:

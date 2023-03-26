@@ -60,8 +60,11 @@ def analyze_emotion(string):
         response = requests.request("POST", url, headers=headers, data=data)
         return json.loads(response.content.decode("utf-8"))
 
-    data = query({"inputs": string})[0]
-    return sorted(data, key=itemgetter('score'))[-1]['label']
+    try:
+        data = query({"inputs": string})[0]
+        return sorted(data, key=itemgetter('score'))[-1]['label']
+    except:
+        return "neutral"
 
 @functions_framework.http
 @cors
@@ -103,11 +106,10 @@ def get_quote(story, most_recent_ai_message):
         messages=[
             {"role": "system", "content": "You are a chatbot designed to extract relevant quotes from stories."},
             {"role": "system", "content": f"Story:\n\n{story}"},
-            {"role": "system", "content": f"Message:\n\n{most_recent_ai_message}"},
-            {"role": "user", "content": f"Provide a quote (1-3 sentences) from the story that supports the above message."},
+            {"role": "user", "content": f"{most_recent_ai_message}\n\n---\n\nProvide a quote (1-3 sentences) from the story that supports the above message. Only write the quote, do not explain."},
         ]
     )
-    return result.choices[0].message.content
+    return result.choices[0].message['content']
 
 @functions_framework.http
 @cors
@@ -141,7 +143,7 @@ def chat(request):
 
     for i in [1, 2, 3]:
         if f"[{i}]" in message:
-            quotes[i - 1] = get_quote(retrieved_stories[i - 1]['story'], message)
+            quotes[i - 1] = get_quote(retrieved_stories[i - 1]['story'], message['content'])
 
     return {"message": dict(message), "quotes": quotes}
 
