@@ -1,4 +1,5 @@
 import os
+import subprocess
 
 COMMAND = """
 gcloud functions deploy {cloud_function_name}
@@ -8,12 +9,15 @@ gcloud functions deploy {cloud_function_name}
 --env-vars-file env.yaml
 """.replace("\n", " ").strip()
 
+SHELL_DIR='/bin/zsh'
 def deploy(cloud_function_name, python_function_name):
     command = COMMAND.format(cloud_function_name=cloud_function_name, python_function_name=python_function_name)
-    os.system(command)
+    # os.system(command)
+    subprocess.call(command, shell=True, executable=SHELL_DIR)
 
 if __name__ == "__main__":
-    os.system("gcloud config set project rivers-381716")
+    command = "gcloud config set project rivers-381716"
+    subprocess.call(command, shell=True, executable=SHELL_DIR)
 
     deploy("chat", "chat")
     deploy("add_story", "add_story")

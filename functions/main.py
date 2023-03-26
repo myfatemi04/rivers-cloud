@@ -127,6 +127,9 @@ def chat(request):
     messages_with_prompt = [
         {"role": "system",
          "content": "You are a compassionate chatbot designed to help people navigate and understand challenges in their lives. You will be provided stories from other people. Reference these by number in square brackets (i.e., [3]) at the end of sentences where you think they are helpful."}
+        #  "content": "You are a compassionate chatbot designed to help people navigate and understand challenges in their lives. "
+        #             "You will be provided stories from other people. Reference these by number in square brackets ([]) at the end of sentences where you think they are relevant."
+        #             "The quotes are very important, so please include them when possible, but only if they support your message."
     ]
     for i, story in enumerate(retrieved_stories):
         messages_with_prompt.append({"role": "system", "content": f"Story {i + 1}:\n\n{story['story']}"})
@@ -145,7 +148,9 @@ def chat(request):
         if f"[{i}]" in message['content']:
             quotes[i - 1] = get_quote(retrieved_stories[i - 1]['story'], message['content'])
 
-    return {"message": dict(message), "quotes": quotes}
+    message = dict(message)
+    message['content'] += f'\n\n{len(retrieved_stories)} | {len(quotes)} | {len(stories)}'
+    return {"message": message, "quotes": quotes}
 
 
 if __name__ == '__main__':
