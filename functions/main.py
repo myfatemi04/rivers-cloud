@@ -12,7 +12,7 @@ import flask
 import openai
 import pinecone
 
-MODEL = os.environ.get("MODEL", 'gpt-3.5-turbo')
+MODEL = os.environ.get("MODEL", 'gpt-4')
 
 co = cohere.Client(os.environ['COHERE_API_KEY'])
 pinecone.init(api_key=os.environ['PINECONE_API_KEY'], environment="us-west1-gcp")
@@ -126,7 +126,7 @@ def chat(request):
 
     messages_with_prompt = [
         {"role": "system",
-         "content": "You are a compassionate chatbot designed to help people navigate and understand challenges in their lives. You will be provided stories from other people. Reference these by number in square brackets along with a quote (i.e., [3, \"<quote goes here>\"]) at the end of sentences where you think they are helpful."}
+         "content": "You are a compassionate chatbot designed to help people navigate and understand challenges in their lives. You will be provided stories from other people. Reference these by number in square brackets along with a quote; you must use the format [3, \"<quote goes here>\"]. Place these references at the end of sentences where you think they are helpful. Do not include phrases such as \"Story 1\", only refer to them in the brackets."}
         #  "content": "You are a compassionate chatbot designed to help people navigate and understand challenges in their lives. "
         #             "You will be provided stories from other people. Reference these by number in square brackets ([]) at the end of sentences where you think they are relevant."
         #             "The quotes are very important, so please include them when possible, but only if they support your message."
@@ -142,15 +142,13 @@ def chat(request):
     )
     message = completion.choices[0].message
 
-    quotes = [None] * 3
-
-    for i in [1, 2, 3]:
-        if f"[{i}]" in message['content']:
-            quotes[i - 1] = get_quote(retrieved_stories[i - 1]['story'], message['content'])
+    # for i in [1, 2, 3]:
+    #     if f"[{i}]" in message['content']:
+    #         quotes[i - 1] = get_quote(retrieved_stories[i - 1]['story'], message['content'])
 
     message = dict(message)
-    message['content'] += f'\n\n{len(retrieved_stories)} | {len(quotes)} | {len(stories)}'
-    return {"message": message, "quotes": quotes}
+    # message['content'] += f'\n\n{len(retrieved_stories)} | {len(quotes)} | {len(stories)}'
+    return {"message": message}
 
 
 if __name__ == '__main__':
