@@ -20,5 +20,5 @@ if __name__ == "__main__":
     subprocess.call(command, shell=True, executable=SHELL_DIR)
 
     deploy("chat", "chat")
-    deploy("add_story", "add_story")
-    deploy("get_stories", "get_stories")
+    # deploy("add_story", "add_story")
+    # deploy("get_stories", "get_stories")
